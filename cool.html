@@ -260,7 +260,7 @@
 
         document.addEventListener('mousemove', (e) => {
             let xAxis = (window.innerWidth / 2 - e.pageX) / 20; // 計算 X 軸旋轉角度
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 20; // 計算 Y 軸旋轉角度
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 20; // 計算 Y 軸旋轉角度 
             
             // 套用旋轉
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
