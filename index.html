@@ -2,10 +2,9 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBERPUNK // 炫炮展示</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WWC's website</title>
     <style>
-        /* --- 基礎設定 --- */
         :root {
             --primary: #0ff;
             --secondary: #f0f;
@@ -13,11 +12,7 @@
             --card-bg: rgba(255, 255, 255, 0.03);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Courier New', monospace;
@@ -28,88 +23,54 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            perspective: 1000px; /* 為3D效果準備 */
+            perspective: 1000px;
+            touch-action: none; /* 禁止手機預設的雙擊縮放 */
         }
 
-        /* --- 背景 Canvas --- */
         canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
 
-        /* --- 3D 懸浮卡片 --- */
         .card {
-            width: 400px;
-            padding: 40px;
+            width: 90%; /* 手機寬度適應 */
+            max-width: 400px;
+            padding: 30px;
             background: var(--card-bg);
-            backdrop-filter: blur(10px); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
             transform-style: preserve-3d;
-            transition: transform 0.1s;
             text-align: center;
             position: relative;
+            /* 預設加入自動漂浮動畫 */
+            animation: float 6s ease-in-out infinite;
         }
 
-        /* 卡片邊緣發光 */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            padding: 2px;
-            background: linear-gradient(45deg, var(--primary), transparent, var(--secondary));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        /* --- 故障文字特效 (Glitch Text) --- */
+        /* 讓文字在手機上小一點 */
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            position: relative;
             color: #fff;
             text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary);
             animation: glitch 3s infinite;
             margin-bottom: 20px;
-            transform: translateZ(50px); /* 讓文字浮起來 */
-        }
-
-        @keyframes glitch {
-            0% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); }
-            20% { text-shadow: -2px 2px var(--secondary), 2px -2px var(--primary); }
-            40% { text-shadow: 2px -2px var(--secondary), -2px 2px var(--primary); }
-            60% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); clip-path: inset(0 0 0 0); }
-            61% { clip-path: inset(20% -6px 60% 0); transform: translate(-2px, 2px) translateZ(50px); }
-            62% { clip-path: inset(60% -6px 30% 0); transform: translate(2px, -2px) translateZ(50px); }
-            63% { clip-path: inset(0 0 0 0); transform: translate(0) translateZ(50px); }
-            100% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); }
+            transform: translateZ(50px);
         }
 
         p {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #aaa;
             margin-bottom: 30px;
             transform: translateZ(30px);
             line-height: 1.6;
         }
 
-        /* --- 霓虹按鈕 --- */
         .btn {
             display: inline-block;
             padding: 12px 30px;
-            background: transparent;
             color: var(--primary);
             text-decoration: none;
             text-transform: uppercase;
@@ -117,17 +78,32 @@
             font-weight: bold;
             border: 2px solid var(--primary);
             border-radius: 5px;
-            position: relative;
-            overflow: hidden;
             transition: 0.3s;
             transform: translateZ(40px);
-            cursor: pointer;
+            background: rgba(0,0,0,0.5); /* 增加一點底色增加可讀性 */
         }
 
-        .btn:hover {
+        .btn:active { /* 手機按下時的效果 */
             background: var(--primary);
             color: #000;
-            box-shadow: 0 0 20px var(--primary), 0 0 50px var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* 故障特效 */
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); }
+            40% { text-shadow: 2px -2px var(--secondary), -2px 2px var(--primary); }
+            60% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); clip-path: inset(0 0 0 0); }
+            61% { clip-path: inset(20% -6px 60% 0); transform: translate(-2px, 2px) translateZ(50px); }
+            63% { clip-path: inset(0 0 0 0); transform: translate(0) translateZ(50px); }
+            100% { text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); }
+        }
+
+        /* 自動漂浮動畫 (當沒有觸控時) */
+        @keyframes float {
+            0%, 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0); }
+            25% { transform: rotateX(5deg) rotateY(5deg) translateZ(0); }
+            75% { transform: rotateX(-5deg) rotateY(-5deg) translateZ(0); }
         }
     </style>
 </head>
@@ -136,63 +112,99 @@
     <canvas id="canvas"></canvas>
 
     <div class="card" id="card">
-        <h1>FUTURE.UI</h1>
-        <p>歡迎來到數位邊境。<br>這裡展示了 Web 前端技術的極限。<br>移動滑鼠，感受維度的變化。</p>
-        <a href="#" class="btn">進入系統</a>
+        <h1>MOBILE.VER</h1>
+        <p>觸控優化已啟動。<br>用手指滑動螢幕，<br>擾動粒子並控制視角。</p>
+        <a href="#" class="btn">INITIALIZE</a>
     </div>
 
     <script>
-        // --- 1. 粒子背景特效 (Particle System) ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const card = document.getElementById('card');
+        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         let particlesArray;
+        let isTouching = false; // 判斷是否正在觸控
 
-        // 處理滑鼠互動
+        // 滑鼠/觸控位置
         let mouse = {
             x: null,
             y: null,
             radius: (canvas.height/80) * (canvas.width/80)
         }
 
-        window.addEventListener('mousemove', function(event) {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        });
+        // --- 整合 觸控 與 滑鼠 事件 ---
 
-        // 粒子物件
+        function updateInput(x, y) {
+            mouse.x = x;
+            mouse.y = y;
+            isTouching = true;
+
+            // 3D 卡片轉動邏輯
+            let xAxis = (window.innerWidth / 2 - x) / 20;
+            let yAxis = (window.innerHeight / 2 - y) / 20;
+            
+            // 暫停自動動畫，改用手指控制
+            card.style.animation = 'none'; 
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        }
+
+        function resetInput() {
+            mouse.x = null;
+            mouse.y = null;
+            isTouching = false;
+            
+            // 手指放開後，恢復自動漂浮動畫
+            card.style.animation = 'float 6s ease-in-out infinite';
+        }
+
+        // 電腦版事件
+        window.addEventListener('mousemove', e => updateInput(e.x, e.y));
+        window.addEventListener('mouseleave', resetInput);
+
+        // 手機版事件
+        window.addEventListener('touchstart', e => {
+            updateInput(e.touches[0].clientX, e.touches[0].clientY);
+        }, {passive: false});
+
+        window.addEventListener('touchmove', e => {
+            e.preventDefault(); // 防止滑動畫面時網頁跟著捲動
+            updateInput(e.touches[0].clientX, e.touches[0].clientY);
+        }, {passive: false});
+
+        window.addEventListener('touchend', resetInput);
+
+
+        // --- 粒子系統 (邏輯不變，參數微調) ---
         class Particle {
             constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
+                this.x = x; this.y = y;
+                this.directionX = directionX; this.directionY = directionY;
+                this.size = size; this.color = color;
             }
-            // 繪製粒子
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = '#0ff'; // 粒子顏色
+                ctx.fillStyle = '#0ff';
                 ctx.fill();
             }
-            // 更新粒子位置
             update() {
                 if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
                 if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
 
-                // 滑鼠互動：排斥效果
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-                if (distance < mouse.radius + this.size) {
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 10;
-                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 10;
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 10;
-                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 10;
+                // 互動邏輯
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < mouse.radius + this.size) {
+                        if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 5;
+                        if (mouse.x > this.x && this.x > this.size * 10) this.x -= 5;
+                        if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 5;
+                        if (mouse.y > this.y && this.y > this.size * 10) this.y -= 5;
+                    }
                 }
                 
                 this.x += this.directionX;
@@ -201,22 +213,22 @@
             }
         }
 
-        // 初始化粒子群
         function init() {
             particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            // 手機上減少一點粒子數量以保持流暢度 (除數變大 = 粒子變少)
+            let divider = (window.innerWidth < 600) ? 15000 : 9000; 
+            let numberOfParticles = (canvas.height * canvas.width) / divider;
+            
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 2) + 1;
                 let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 2) - 1; // 速度
-                let directionY = (Math.random() * 2) - 1;
-                let color = '#0ff';
-                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+                let directionX = (Math.random() * 1.5) - 0.75; // 稍微減慢速度
+                let directionY = (Math.random() * 1.5) - 0.75;
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, '#0ff'));
             }
         }
 
-        // 動畫循環
         function animate() {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -227,15 +239,17 @@
             connect();
         }
 
-        // 連線效果
         function connect() {
             let opacityValue = 1;
+            // 手機上連線距離縮短一點，避免畫面太亂
+            let connectionDistance = (window.innerWidth < 600) ? (canvas.width/9) * (canvas.height/9) : (canvas.width/7) * (canvas.height/7);
+
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
                                    ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-                    if (distance < (canvas.width/7) * (canvas.height/7)) {
-                        opacityValue = 1 - (distance / 20000);
+                    if (distance < connectionDistance) {
+                        opacityValue = 1 - (distance / 15000); // 線條透明度
                         ctx.strokeStyle = 'rgba(0, 255, 255,' + opacityValue + ')';
                         ctx.lineWidth = 1;
                         ctx.beginPath();
@@ -247,7 +261,6 @@
             }
         }
 
-        // 視窗大小改變時重置
         window.addEventListener('resize', function(){
             canvas.width = innerWidth;
             canvas.height = innerHeight;
@@ -255,22 +268,8 @@
             init();
         });
 
-        // --- 2. 3D 卡片傾斜特效 (3D Tilt Effect) ---
-        const card = document.getElementById('card');
-
-        document.addEventListener('mousemove', (e) => {
-            let xAxis = (window.innerWidth / 2 - e.pageX) / 20; // 計算 X 軸旋轉角度
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 20; // 計算 Y 軸旋轉角度
-            
-            // 套用旋轉
-            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-
-        // 滑鼠離開時復原
-        /* 注意：這裡故意不加「復原」代碼，
-           讓卡片停留在最後的位置看起來更有「懸浮」的失重感。
-           如果想要復原，可以取消註解以下代碼：
-        */
-        // document.addEventListener('mouseleave', () => {
-        //     card.style.transition = "all 0.5s ease";
-        //     card.style.
+        init();
+        animate();
+    </script>
+</body>
+</html>
